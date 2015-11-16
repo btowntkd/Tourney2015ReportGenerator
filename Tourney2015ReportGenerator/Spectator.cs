@@ -21,7 +21,7 @@ namespace Tourney2015ReportGenerator
         {
             return new string[]
             {
-                FullName,
+                LastName + ", " + FirstName,
                 NumAdults.ToString(),
                 NumChildren.ToString()
             };

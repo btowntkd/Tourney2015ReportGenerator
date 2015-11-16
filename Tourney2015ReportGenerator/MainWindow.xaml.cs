@@ -55,38 +55,47 @@ namespace Tourney2015ReportGenerator
             }
         }
 
-        private void GenerateReportButton_Click(object sender, RoutedEventArgs e)
+        private async void GenerateReportButton_Click(object sender, RoutedEventArgs e)
         {
-            try
+            progressBar.Visibility = Visibility.Visible;
+            this.IsEnabled = false;
+            var inputFileName = inputFileTextBox.Text;
+            await Task.Run(() =>
             {
-                var records = ReadRegistrationFile(inputFileTextBox.Text);
-                var reporter = new RegistrationReporter(records);
-                var reportExporter = new ExcelReportPrinter(reporter);
+                try
+                {
+                    var records = ReadRegistrationFile(inputFileName);
+                    var reporter = new RegistrationReporter(records);
+                    var reportExporter = new ExcelReportPrinter(reporter);
 
-                var saveDialog = new SaveFileDialog()
-                {
-                    OverwritePrompt = true,
-                    Filter = "Excel File (*.xlsx)|*.xlsx"
-                };
-                var result = saveDialog.ShowDialog();
-                if (result.GetValueOrDefault())
-                {
-                    var outputFileName = saveDialog.FileName;
-                    try
+                    var saveDialog = new SaveFileDialog()
                     {
-                        reportExporter.CreateReport(outputFileName);
-                        MessageBox.Show("Report created successfully");
-                    }
-                    catch (Exception ex)
+                        OverwritePrompt = true,
+                        Filter = "Excel File (*.xlsx)|*.xlsx"
+                    };
+                    var result = saveDialog.ShowDialog();
+                    if (result.GetValueOrDefault())
                     {
-                        MessageBox.Show(string.Format("Unable to save file: {0}", ex.Message));
+                        var outputFileName = saveDialog.FileName;
+                        try
+                        {
+                            reportExporter.CreateReport(outputFileName);
+                            MessageBox.Show("Report created successfully");
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show(string.Format("Unable to save file: {0}", ex.Message));
+                        }
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(string.Format("Unable to read file: {0}", ex.Message));
-            }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(string.Format("Unable to read file: {0}", ex.Message));
+                }
+            });
+
+            progressBar.Visibility = Visibility.Hidden;
+            this.IsEnabled = true;
         }
 
         private IEnumerable<RegistrationRecord> ReadRegistrationFile(string inputFile)

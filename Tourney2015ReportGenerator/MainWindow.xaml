@@ -22,8 +22,15 @@
                 
                 <TextBox x:Name="inputFileTextBox" Grid.Column="0" Margin="5" IsReadOnly="True" TextChanged="InputFileTextBox_Changed" />
                 <Button x:Name="browseButton" Grid.Column="1" Width="90" Margin="5" Content="Browse" Click="BrowseButton_Click" />
-                
-                <Button x:Name="generateReportButton" IsEnabled="False" Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Right" Width="150" Height="50" Grid.Row="1" Content="Generate Report" Click="GenerateReportButton_Click" />
+
+                <Grid Grid.Row="1" Grid.ColumnSpan="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <ProgressBar x:Name="progressBar" IsIndeterminate="True" VerticalAlignment="Center" Height="20" Margin="5" Visibility="Hidden" />
+                    <Button x:Name="generateReportButton" IsEnabled="False" Grid.Column="1" VerticalAlignment="Center" Width="150" Height="50" Content="Generate Report" Click="GenerateReportButton_Click" />
+                </Grid>
             </Grid>
         </GroupBox>
     </Grid>

@@ -46,14 +46,28 @@ namespace Tourney2015ReportGenerator
             worksheet.Name = "Competitor List";
             PrintWorksheetTitle("Competitor List", worksheet, row++);
 
+            var startRow = row;
             PrintTableColumnNames(worksheet, Competitor.TableFullColumnNames(), row++);
             foreach (var competitor in competitors)
             {
                 PrintTableColumnData(worksheet, competitor.TableFullRowData(), row++);
             }
+            var endRow = row - 1;
             string firstCol = ExcelColumnFromNumber(1);
             string lastCol = ExcelColumnFromNumber(Competitor.TableFullColumnNames().Length);
             worksheet.Columns[firstCol + ":" + lastCol].AutoFit();
+
+            var tableRange = worksheet.Range(
+                worksheet.Cells[startRow, firstCol],
+                worksheet.Cells[endRow, lastCol]);
+
+            var table = worksheet.ListObjects.Add(
+                NetOffice.ExcelApi.Enums.XlListObjectSourceType.xlSrcRange,
+                tableRange,
+                Type.Missing,
+                NetOffice.ExcelApi.Enums.XlYesNoGuess.xlYes,
+                Type.Missing);
+            table.Name = "CompetitorList";
         }
 
         protected void CreateSpectatorListWorksheet(NetOffice.ExcelApi.Worksheet worksheet)

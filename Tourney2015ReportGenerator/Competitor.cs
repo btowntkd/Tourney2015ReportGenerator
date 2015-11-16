@@ -31,10 +31,13 @@ namespace Tourney2015ReportGenerator
             if(ageDivision == AgeDivision)
                 return true;
 
-            var normalIndex = Array.IndexOf(EventInfo.AgeDivisions, AgeDivision);
-            if (EventInfo.AgeDivisions.Length > normalIndex + 1)
+            if (IsDoubleSparring)
             {
-                return EventInfo.AgeDivisions[normalIndex + 1] == ageDivision;
+                var normalIndex = Array.IndexOf(EventInfo.AgeDivisions, AgeDivision);
+                if (EventInfo.AgeDivisions.Length > normalIndex + 1)
+                {
+                    return EventInfo.AgeDivisions[normalIndex + 1] == ageDivision;
+                }
             }
             return false;
         }

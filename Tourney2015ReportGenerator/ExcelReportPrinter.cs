@@ -42,10 +42,10 @@ namespace Tourney2015ReportGenerator
             var competitors = _reporter.GetCompetitors()
                 .OrderBy(x => x.LastName);
 
+            var row = 1;
             worksheet.Name = "Competitor List";
-            PrintWorksheetTitle("Competitor List", worksheet);
+            PrintWorksheetTitle("Competitor List", worksheet, row++);
 
-            var row = 2;
             PrintTableColumnNames(worksheet, Competitor.TableFullColumnNames(), row++);
             foreach (var competitor in competitors)
             {
@@ -61,10 +61,10 @@ namespace Tourney2015ReportGenerator
             var spectators = _reporter.GetSpectators()
                 .OrderBy(x => x.LastName);
 
+            var row = 1;
             worksheet.Name = "Spectator List";
-            PrintWorksheetTitle("Spectator List", worksheet);
+            PrintWorksheetTitle("Spectator List", worksheet, row++);
 
-            var row = 2;
             PrintTableColumnNames(worksheet, Spectator.TableColumnNames(), row++);
             foreach (var spectator in spectators)
             {
@@ -80,10 +80,10 @@ namespace Tourney2015ReportGenerator
             var referees = _reporter.GetReferees()
                 .OrderBy(x => x.LastName);
 
+            var row = 1;
             worksheet.Name = "Referee List";
-            PrintWorksheetTitle("Referee List", worksheet);
+            PrintWorksheetTitle("Referee List", worksheet, row);
 
-            var row = 2;
             PrintTableColumnNames(worksheet, Referee.TableColumnNames(), row++);
             foreach (var referee in referees)
             {
@@ -100,10 +100,10 @@ namespace Tourney2015ReportGenerator
                 .OrderBy(x => x.SchoolName)
                 .ThenBy(x => x.LastName);
 
+            var row = 1;
             worksheet.Name = "Coach List";
-            PrintWorksheetTitle("Coach List", worksheet);
+            PrintWorksheetTitle("Coach List", worksheet, row);
 
-            var row = 2;
             PrintTableColumnNames(worksheet, Coach.TableColumnNames(), row++);
             foreach (var coach in coaches)
             {
@@ -120,18 +120,20 @@ namespace Tourney2015ReportGenerator
                 .Where(x => x.IsSparring)
                 .GroupBy(x => x.Rank);
 
+            var row = 1;
             worksheet.Name = "Sparring Divisions";
-            PrintWorksheetTitle("Sparring Divisions", worksheet);
+            PrintWorksheetTitle("Sparring Divisions", worksheet, row);
 
-            var row = 2;
             foreach (var rankGroup in competitorsByRank)
             {
-                var competitorsByAgeDivision = rankGroup
-                    .OrderBy(x => x.Age)
-                    .GroupBy(x => x.AgeDivision);
+                var competitorsByAgeDivision = EventInfo.AgeDivisions
+                    .ToDictionary(
+                        x => x,
+                        y => rankGroup.Where(z => z.IsIncludedInAgeDivision(y)));
+                   
                 foreach (var ageGroup in competitorsByAgeDivision)
                 {
-                    var competitorsByGender = ageGroup.GroupBy(x => x.Gender);
+                    var competitorsByGender = ageGroup.Value.GroupBy(x => x.Gender);
                     foreach (var genderGroup in competitorsByGender)
                     {
                         var competitors = genderGroup.OrderBy(x => x.SchoolName);
@@ -146,6 +148,7 @@ namespace Tourney2015ReportGenerator
                     }
                 }
             }
+
             string firstCol = ExcelColumnFromNumber(1);
             string lastCol = ExcelColumnFromNumber(Competitor.TableColumnNames().Length);
             worksheet.Columns[firstCol + ":" + lastCol].AutoFit();
@@ -157,10 +160,10 @@ namespace Tourney2015ReportGenerator
                 .Where(x => x.IsForms)
                 .GroupBy(x => x.Rank);
 
+            var row = 1;
             worksheet.Name = "Forms Divisions";
-            PrintWorksheetTitle("Forms Divisions", worksheet);
+            PrintWorksheetTitle("Forms Divisions", worksheet, row++);
 
-            var row = 2;
             foreach (var rankGroup in competitorsByRank)
             {
                 var competitorsByAgeDivision = rankGroup
@@ -189,11 +192,11 @@ namespace Tourney2015ReportGenerator
         }
 
 
-        protected void PrintWorksheetTitle(string title, NetOffice.ExcelApi.Worksheet worksheet)
+        protected void PrintWorksheetTitle(string title, NetOffice.ExcelApi.Worksheet worksheet, int row)
         {
-            worksheet.Cells[1,"A"].Value = title;
-            worksheet.Cells[1,"A"].Font.Size = HeaderFontSize;
-            worksheet.Range(worksheet.Cells[1, "A"], worksheet.Cells[1, "F"]).Merge();
+            worksheet.Cells[row,"A"].Value = title;
+            worksheet.Cells[row,"A"].Font.Size = HeaderFontSize;
+            worksheet.Range(worksheet.Cells[row, "A"], worksheet.Cells[row, "F"]).Merge();
         }
 
         protected void PrintTableColumnNames(NetOffice.ExcelApi.Worksheet worksheet, string[] columnNames, int row)

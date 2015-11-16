@@ -21,9 +21,23 @@ namespace Tourney2015ReportGenerator
         public AgeDivision AgeDivision { get { return CalculateAgeDivision(); } }
 
         public bool IsSparring { get { return CalculateIsSparring(); } }
+        public bool IsDoubleSparring { get { return CalculateIsDoubleSparring(); } }
         public bool IsForms { get { return CalculateIsForms(); } }
 
         public string NameBadgeEvent { get { return CalculateNameBadgeEvent(); } }
+
+        public bool IsIncludedInAgeDivision(AgeDivision ageDivision)
+        {
+            if(ageDivision == AgeDivision)
+                return true;
+
+            var normalIndex = Array.IndexOf(EventInfo.AgeDivisions, AgeDivision);
+            if (EventInfo.AgeDivisions.Length > normalIndex + 1)
+            {
+                return EventInfo.AgeDivisions[normalIndex + 1] == ageDivision;
+            }
+            return false;
+        }
 
         protected string CalculateRank()
         {
@@ -62,6 +76,20 @@ namespace Tourney2015ReportGenerator
                         return (selectedEvent == EventInfo.DoubleElimFormsAndSparring
                             || selectedEvent == EventInfo.DoubleElimDoubleSparring);
                     }
+                case EventInfo.DoubleElim3EventTicket:
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        protected bool CalculateIsDoubleSparring()
+        {
+            var ticketType = _record.TicketType;
+            switch (ticketType)
+            {
+                case EventInfo.DoubleElim2EventTicket:
+                    return _record.SelectTwoDoubleElim == EventInfo.DoubleElimDoubleSparring;
                 case EventInfo.DoubleElim3EventTicket:
                     return true;
                 default:
@@ -118,7 +146,7 @@ namespace Tourney2015ReportGenerator
         {
             return new string[]
             {
-                FullName,
+                FullName + (IsDoubleSparring ? "***" : ""),
                 Weight.ToString(),
                 SchoolName
             };

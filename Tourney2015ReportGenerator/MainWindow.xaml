@@ -1,0 +1,30 @@
+﻿<Window x:Class="Tourney2015ReportGenerator.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Tourney2015ReportGenerator"
+        mc:Ignorable="d"
+        WindowStyle="SingleBorderWindow"
+        ResizeMode="NoResize"
+        Title="MainWindow" Height="150" Width="500">
+    <Grid>
+        <GroupBox Header="Select input CSV:" Margin="3">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                
+                <TextBox x:Name="inputFileTextBox" Grid.Column="0" Margin="5" IsReadOnly="True" TextChanged="InputFileTextBox_Changed" />
+                <Button x:Name="browseButton" Grid.Column="1" Width="90" Margin="5" Content="Browse" Click="BrowseButton_Click" />
+                
+                <Button x:Name="generateReportButton" IsEnabled="False" Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Right" Width="150" Height="50" Grid.Row="1" Content="Generate Report" Click="GenerateReportButton_Click" />
+            </Grid>
+        </GroupBox>
+    </Grid>
+</Window>

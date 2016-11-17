@@ -36,7 +36,7 @@ namespace Tourney2015ReportGenerator
             new AgeDivision("12-14", 12, 14),
             new AgeDivision("15-17", 15, 17),
             new AgeDivision("18-32", 18, 32),
-            new AgeDivision("> 32", 32, 99),
+            new AgeDivision("> 32", 32, 9999),
         };
 
         public const string BlackBeltRank = "Black Belt";

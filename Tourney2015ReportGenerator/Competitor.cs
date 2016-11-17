@@ -149,7 +149,8 @@ namespace Tourney2015ReportGenerator
         {
             return new string[]
             {
-                FullName + (IsDoubleSparring ? "***" : ""),
+                FirstName,
+                LastName + (IsDoubleSparring ? "***" : ""),
                 Weight.ToString(),
                 SchoolName
             };
@@ -159,7 +160,8 @@ namespace Tourney2015ReportGenerator
         {
             return new string[]
             {
-                FullName,
+                FirstName,
+                LastName + (IsDoubleSparring ? "***" : ""),
                 Gender,
                 Age.ToString(),
                 Weight.ToString(),
@@ -173,7 +175,8 @@ namespace Tourney2015ReportGenerator
         {
             return new string[]
             {
-                "Name",
+                "First Name",
+                "Last Name",
                 "Weight",
                 "School"
             };
@@ -183,7 +186,8 @@ namespace Tourney2015ReportGenerator
         {
             return new string[]
             {
-                "Name",
+                "First Name",
+                "Last Name",
                 "Gender",
                 "Age",
                 "Weight",

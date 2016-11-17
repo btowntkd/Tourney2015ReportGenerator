@@ -96,7 +96,7 @@ namespace Tourney2015ReportGenerator
 
             var row = 1;
             worksheet.Name = "Referee List";
-            PrintWorksheetTitle("Referee List", worksheet, row);
+            PrintWorksheetTitle("Referee List", worksheet, row++);
 
             PrintTableColumnNames(worksheet, Referee.TableColumnNames(), row++);
             foreach (var referee in referees)
@@ -116,7 +116,7 @@ namespace Tourney2015ReportGenerator
 
             var row = 1;
             worksheet.Name = "Coach List";
-            PrintWorksheetTitle("Coach List", worksheet, row);
+            PrintWorksheetTitle("Coach List", worksheet, row++);
 
             PrintTableColumnNames(worksheet, Coach.TableColumnNames(), row++);
             foreach (var coach in coaches)
@@ -136,7 +136,7 @@ namespace Tourney2015ReportGenerator
 
             var row = 1;
             worksheet.Name = "Sparring Divisions";
-            PrintWorksheetTitle("Sparring Divisions", worksheet, row);
+            PrintWorksheetTitle("Sparring Divisions", worksheet, row++);
 
             foreach (var rankGroup in competitorsByRank)
             {
@@ -150,7 +150,7 @@ namespace Tourney2015ReportGenerator
                     var competitorsByGender = ageGroup.Value.GroupBy(x => x.Gender);
                     foreach (var genderGroup in competitorsByGender)
                     {
-                        var competitors = genderGroup.OrderBy(x => x.SchoolName);
+                        var competitors = genderGroup.OrderBy(x => x.Weight);
 
                         PrintGroupHeader(genderGroup.Key + ", " + ageGroup.Key.Name + ", " + rankGroup.Key, worksheet, row++);
                         PrintTableColumnNames(worksheet, Competitor.TableColumnNames(), row++);
@@ -242,7 +242,7 @@ namespace Tourney2015ReportGenerator
             worksheet.Cells[row, "A"].Value = groupTitle;
             worksheet.Cells[row, "A"].Font.Size = GroupFontSize;
             worksheet.Cells[row, "A"].Interior.Color = ColorToDouble(Colors.LightGray);
-            worksheet.Range(worksheet.Cells[row, "A"], worksheet.Cells[row, "C"]).Merge();
+            worksheet.Range(worksheet.Cells[row, "A"], worksheet.Cells[row, "D"]).Merge();
         }
 
         protected string ExcelColumnFromNumber(int column)

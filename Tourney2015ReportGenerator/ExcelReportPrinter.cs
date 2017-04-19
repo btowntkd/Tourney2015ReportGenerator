@@ -130,24 +130,26 @@ namespace Tourney2015ReportGenerator
 
         protected void CreateSparringListWorksheet(NetOffice.ExcelApi.Worksheet worksheet)
         {
-            var competitorsByRank = _reporter.GetCompetitors()
-                .Where(x => x.IsSparring)
-                .GroupBy(x => x.Rank);
-
             var row = 1;
             worksheet.Name = "Sparring Divisions";
             PrintWorksheetTitle("Sparring Divisions", worksheet, row++);
 
-            foreach (var rankGroup in competitorsByRank)
-            {
-                var competitorsByAgeDivision = EventInfo.AgeDivisions
+            var sparringCompetitors = _reporter.GetCompetitors()
+                .Where(x => x.IsSparring);
+
+            var competitorsByAgeDivision = EventInfo.AgeDivisions
                     .ToDictionary(
                         x => x,
-                        y => rankGroup.Where(z => z.IsIncludedInAgeDivision(y)));
+                        y => sparringCompetitors.Where(z => z.IsIncludedInAgeDivision(y)));
+
+            foreach (var ageGroup in competitorsByAgeDivision)
+            {
+                var competitorsByRank = ageGroup.Value
+                    .GroupBy(x => x.Rank);
                    
-                foreach (var ageGroup in competitorsByAgeDivision)
+                foreach (var rankGroup in competitorsByRank)
                 {
-                    var competitorsByGender = ageGroup.Value.GroupBy(x => x.Gender);
+                    var competitorsByGender = rankGroup.GroupBy(x => x.Gender);
                     foreach (var genderGroup in competitorsByGender)
                     {
                         var competitors = genderGroup.OrderBy(x => x.Weight);
@@ -170,22 +172,26 @@ namespace Tourney2015ReportGenerator
 
         protected void CreateFormsListWorksheet(NetOffice.ExcelApi.Worksheet worksheet)
         {
-            var competitorsByRank = _reporter.GetCompetitors()
-                .Where(x => x.IsForms)
-                .GroupBy(x => x.Rank);
-
             var row = 1;
             worksheet.Name = "Forms Divisions";
             PrintWorksheetTitle("Forms Divisions", worksheet, row++);
 
-            foreach (var rankGroup in competitorsByRank)
+            var formsCompetitors = _reporter.GetCompetitors()
+                .Where(x => x.IsForms);
+
+            var competitorsByAgeDivision = EventInfo.AgeDivisions
+                    .ToDictionary(
+                        x => x,
+                        y => formsCompetitors.Where(z => z.IsIncludedInAgeDivision(y)));
+
+            foreach (var ageGroup in competitorsByAgeDivision)
             {
-                var competitorsByAgeDivision = rankGroup
-                    .OrderBy(x => x.Age)
-                    .GroupBy(x => x.AgeDivision);
-                foreach (var ageGroup in competitorsByAgeDivision)
+                var competitorsByRank = ageGroup.Value
+                    .GroupBy(x => x.Rank);
+
+                foreach (var rankGroup in competitorsByRank)
                 {
-                    var competitorsByGender = ageGroup.GroupBy(x => x.Gender);
+                    var competitorsByGender = rankGroup.GroupBy(x => x.Gender);
                     foreach (var genderGroup in competitorsByGender)
                     {
                         var competitors = genderGroup.OrderBy(x => x.SchoolName);

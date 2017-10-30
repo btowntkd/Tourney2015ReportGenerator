@@ -137,24 +137,22 @@ namespace Tourney2015ReportGenerator
             var sparringCompetitors = _reporter.GetCompetitors()
                 .Where(x => x.IsSparring);
 
-            var competitorsByAgeDivision = EventInfo.AgeDivisions
-                    .ToDictionary(
-                        x => x,
-                        y => sparringCompetitors.Where(z => z.IsIncludedInAgeDivision(y)));
+            var ageDivisions = EventInfo.AgeDivisions;
+            var ranks = EventInfo.Ranks;
 
-            foreach (var ageGroup in competitorsByAgeDivision)
+            foreach (var age in ageDivisions)
             {
-                foreach(var rank in EventInfo.Ranks)
+                foreach (var rank in ranks)
                 {
-                    var competitorsInRank = ageGroup.Value
-                        .Where(x => x.IsIncludedInRank(rank));
+                    var matchingCompetitorsByGender = sparringCompetitors
+                        .Where(x => x.IsIncludedInAgeDivision(age) && x.IsIncludedInRank(rank))
+                        .GroupBy(x => x.Gender);
 
-                    var competitorsByGender = competitorsInRank.GroupBy(x => x.Gender);
-                    foreach (var genderGroup in competitorsByGender)
+                    foreach (var genderGroup in matchingCompetitorsByGender)
                     {
                         var competitors = genderGroup.OrderBy(x => x.Weight);
 
-                        PrintGroupHeader(genderGroup.Key + ", " + ageGroup.Key.Name + ", " + rank, worksheet, row++);
+                        PrintGroupHeader(genderGroup.Key + ", " + age.Name + ", " + rank, worksheet, row++);
                         PrintTableColumnNames(worksheet, Competitor.TableColumnNames(), row++);
                         foreach (var competitor in competitors)
                         {

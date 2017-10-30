@@ -33,7 +33,7 @@ namespace Tourney2015ReportGenerator
             if (rank == Rank)
                 return true;
 
-            if (IncludeInExtraAgeDivision)
+            if (IncludeInExtraRankDivision)
             {
                 var normalIndex = Array.IndexOf(EventInfo.Ranks, Rank);
                 if (EventInfo.Ranks.Length > normalIndex + 1)

@@ -10,22 +10,12 @@ namespace Tourney2015ReportGenerator
     {
         public const string RefereeTicket = "Referee";
         public const string CoachTicket = "Coach";
-        public const string SingleElimTicket = "Single-Elimination Events";
-        public const string DoubleElim1EventTicket = "Double-Elimination and/or Sport Poomsae (1 Event)";
-        public const string DoubleElim2EventTicket = "Double-Elimination and/or Sport Poomsae (2 Events)";
-        public const string DoubleElim3EventTicket = "Double-Elimination and/or Sport Poomsae (3 Events)";
+        public const string SingleElimTicket = "Single-Elimination Sparring";
+        public const string SingleAndDoubleElimTicket = "Single-Elimination and Double-Elimination (Red-Belt Only)";
+        public const string DoubleElim1EventTicket = "Double-Elimination Sparring";
+        public const string DoubleElim2EventTicket = "Double-Elimination Sparring (2 Divisions)";
         public const string SpectatorAdultTicket = "Spectator (Adult, age 12+)";
         public const string SpectatorChildTicket = "Spectator (Child, age 6-12)";
-
-
-        public const string SingleElimFormsAndSparring = "Forms and Sparring";
-        public const string SingleElimFormsOnly = "Forms only";
-        public const string SingleElimSparringOnly = "Sparring only";
-
-        public const string DoubleElimFormsAndSparring = "Forms and Sparring";
-        public const string DoubleElimFormsOnly = "Forms only";
-        public const string DoubleElimSparringOnly = "Sparring only";
-        public const string DoubleElimDoubleSparring = "2x Sparring Events (two age divisions)";
 
         private static readonly AgeDivision[] _ageDivisions = 
         {
@@ -39,9 +29,23 @@ namespace Tourney2015ReportGenerator
             new AgeDivision("> 32", 32, 9999),
         };
 
+        private static readonly string[] _ranks =
+        {
+            BeginnerRank,
+            Intermediate1Rank,
+            Intermediate2Rank,
+            AdvancedRank,
+            BlackBeltRank
+        };
+
+        public const string BeginnerRank = "Beginner (10th geup - 8th geup)";
+        public const string Intermediate1Rank = "Intermediate I (7th geup - 5th geup)";
+        public const string Intermediate2Rank = "Intermediate II (4th geup - 3rd geup)";
+        public const string AdvancedRank = "Advanced (2nd geup - 1st geup)";
         public const string BlackBeltRank = "Black Belt";
 
         public static AgeDivision[] AgeDivisions { get { return _ageDivisions; } }
+        public static string[] Ranks { get { return _ranks; } }
     }
 
     public class AgeDivision

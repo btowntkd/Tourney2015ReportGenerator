@@ -36,12 +36,6 @@ namespace Tourney2015ReportGenerator
         [FieldQuoted('"', QuoteMode.OptionalForBoth)]
         public string RefereeLevel;
         [FieldQuoted('"', QuoteMode.OptionalForBoth)]
-        public string SelectOneDoubleElim;
-        [FieldQuoted('"', QuoteMode.OptionalForBoth)]
-        public string SelectTwoDoubleElim;
-        [FieldQuoted('"', QuoteMode.OptionalForBoth)]
-        public string SelectSingleElimEvents;
-        [FieldQuoted('"', QuoteMode.OptionalForBoth)]
         public string LiabilityWaiver;
     }
 }

@@ -21,17 +21,35 @@ namespace Tourney2015ReportGenerator
         public AgeDivision AgeDivision { get { return CalculateAgeDivision(); } }
 
         public bool IsSparring { get { return CalculateIsSparring(); } }
-        public bool IsDoubleSparring { get { return CalculateIsDoubleSparring(); } }
+        public bool IncludeInExtraRankDivision { get { return CalculateIncludeInExtraRankDivision(); } }
+        public bool IncludeInExtraAgeDivision { get { return CalculateIncludeInExtraAgeDivision(); } }
+        public bool IsSpecial { get { return IncludeInExtraRankDivision || IncludeInExtraAgeDivision; } }
         public bool IsForms { get { return CalculateIsForms(); } }
 
         public string NameBadgeEvent { get { return CalculateNameBadgeEvent(); } }
+
+        public bool IsIncludedInRank(string rank)
+        {
+            if (rank == Rank)
+                return true;
+
+            if (IncludeInExtraAgeDivision)
+            {
+                var normalIndex = Array.IndexOf(EventInfo.Ranks, Rank);
+                if (EventInfo.Ranks.Length > normalIndex + 1)
+                {
+                    return EventInfo.Ranks[normalIndex + 1] == rank;
+                }
+            }
+            return false;
+        }
 
         public bool IsIncludedInAgeDivision(AgeDivision ageDivision)
         {
             if(ageDivision == AgeDivision)
                 return true;
 
-            if (IsDoubleSparring)
+            if (IncludeInExtraAgeDivision)
             {
                 var normalIndex = Array.IndexOf(EventInfo.AgeDivisions, AgeDivision);
                 if (EventInfo.AgeDivisions.Length > normalIndex + 1)
@@ -47,8 +65,10 @@ namespace Tourney2015ReportGenerator
             var ticketType = _record.TicketType;
             if (ticketType == EventInfo.SingleElimTicket)
                 return _record.Rank;
+            else if (ticketType == EventInfo.SingleAndDoubleElimTicket)
+                return EventInfo.AdvancedRank;
             else
-                return "Black Belt";
+                return EventInfo.BlackBeltRank;
         }
 
         protected AgeDivision CalculateAgeDivision()
@@ -59,41 +79,27 @@ namespace Tourney2015ReportGenerator
 
         protected bool CalculateIsSparring()
         {
+            return true;
+        }
+
+        protected bool CalculateIncludeInExtraAgeDivision()
+        {
             var ticketType = _record.TicketType;
             switch (ticketType)
             {
-                case EventInfo.SingleElimTicket:
-                    {
-                        var selectedEvent = _record.SelectSingleElimEvents;
-                        return (selectedEvent == EventInfo.SingleElimSparringOnly
-                            || selectedEvent == EventInfo.SingleElimFormsAndSparring);
-                    }
-                case EventInfo.DoubleElim1EventTicket:
-                    {
-                        var selectedEvent = _record.SelectOneDoubleElim;
-                        return selectedEvent == EventInfo.DoubleElimSparringOnly;
-                    }
                 case EventInfo.DoubleElim2EventTicket:
-                    {
-                        var selectedEvent = _record.SelectTwoDoubleElim;
-                        return (selectedEvent == EventInfo.DoubleElimFormsAndSparring
-                            || selectedEvent == EventInfo.DoubleElimDoubleSparring);
-                    }
-                case EventInfo.DoubleElim3EventTicket:
                     return true;
                 default:
                     return false;
             }
         }
 
-        protected bool CalculateIsDoubleSparring()
+        protected bool CalculateIncludeInExtraRankDivision()
         {
             var ticketType = _record.TicketType;
             switch (ticketType)
             {
-                case EventInfo.DoubleElim2EventTicket:
-                    return _record.SelectTwoDoubleElim == EventInfo.DoubleElimDoubleSparring;
-                case EventInfo.DoubleElim3EventTicket:
+                case EventInfo.SingleAndDoubleElimTicket:
                     return true;
                 default:
                     return false;
@@ -102,47 +108,20 @@ namespace Tourney2015ReportGenerator
 
         protected bool CalculateIsForms()
         {
-            var ticketType = _record.TicketType;
-            switch (ticketType)
-            {
-                case EventInfo.SingleElimTicket:
-                    {
-                        var selectedEvent = _record.SelectSingleElimEvents;
-                        return (selectedEvent == EventInfo.SingleElimFormsOnly
-                            || selectedEvent == EventInfo.SingleElimFormsAndSparring);
-                    }
-                case EventInfo.DoubleElim1EventTicket:
-                    {
-                        var selectedEvent = _record.SelectOneDoubleElim;
-                        return selectedEvent == EventInfo.DoubleElimFormsOnly;
-                    }
-                case EventInfo.DoubleElim2EventTicket:
-                    {
-                        var selectedEvent = _record.SelectTwoDoubleElim;
-                        return selectedEvent == EventInfo.DoubleElimFormsAndSparring;
-                    }
-                case EventInfo.DoubleElim3EventTicket:
-                    return true;
-                default:
-                    return false;
-            }
+            return false;
         }
 
         protected string CalculateNameBadgeEvent()
         {
-            if (_record.SelectSingleElimEvents == EventInfo.SingleElimSparringOnly
-                || _record.SelectOneDoubleElim == EventInfo.DoubleElimSparringOnly)
-                return "Sparring";
-            if (_record.SelectSingleElimEvents == EventInfo.SingleElimFormsOnly
-                || _record.SelectOneDoubleElim == EventInfo.DoubleElimFormsOnly)
-                return "Forms";
-            if (_record.SelectSingleElimEvents == EventInfo.SingleElimFormsAndSparring
-                || _record.SelectTwoDoubleElim == EventInfo.DoubleElimFormsAndSparring)
-                return "Forms & Sparring";
-            if (_record.SelectTwoDoubleElim == EventInfo.DoubleElimDoubleSparring)
-                return "2x Sparring";
-
-            return "Forms & 2x Sparring";
+            if (_record.TicketType == EventInfo.SingleElimTicket)
+                return "Single-Elim Sparring";
+            if(_record.TicketType == EventInfo.DoubleElim1EventTicket)
+                return "Double-Elim Sparring";
+            if (_record.TicketType == EventInfo.SingleAndDoubleElimTicket)
+                return "Single and Double-Elim Sparring";
+            if (_record.TicketType == EventInfo.DoubleElim2EventTicket)
+                return "Double-Elim Sparring (2x)";
+            return "";
         }
 
         public override string[] TableRowData()
@@ -150,7 +129,7 @@ namespace Tourney2015ReportGenerator
             return new string[]
             {
                 FirstName,
-                LastName + (IsDoubleSparring ? "***" : ""),
+                LastName + (IsSpecial ? "***" : ""),
                 Weight.ToString(),
                 SchoolName
             };
@@ -161,7 +140,7 @@ namespace Tourney2015ReportGenerator
             return new string[]
             {
                 FirstName,
-                LastName + (IsDoubleSparring ? "***" : ""),
+                LastName + (IsSpecial ? "***" : ""),
                 Gender,
                 Age.ToString(),
                 Weight.ToString(),

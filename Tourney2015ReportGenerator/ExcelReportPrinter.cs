@@ -30,7 +30,7 @@ namespace Tourney2015ReportGenerator
                 CreateRefereeListWorksheet(workbook.Worksheets.Add(Type.Missing, workbook.Worksheets[workbook.Worksheets.Count]) as NetOffice.ExcelApi.Worksheet);
                 CreateCoachListWorksheet(workbook.Worksheets.Add(Type.Missing, workbook.Worksheets[workbook.Worksheets.Count]) as NetOffice.ExcelApi.Worksheet);
                 CreateSparringListWorksheet(workbook.Worksheets.Add(Type.Missing, workbook.Worksheets[workbook.Worksheets.Count]) as NetOffice.ExcelApi.Worksheet);
-                CreateFormsListWorksheet(workbook.Worksheets.Add(Type.Missing, workbook.Worksheets[workbook.Worksheets.Count]) as NetOffice.ExcelApi.Worksheet);
+                //CreateFormsListWorksheet(workbook.Worksheets.Add(Type.Missing, workbook.Worksheets[workbook.Worksheets.Count]) as NetOffice.ExcelApi.Worksheet);
 
                 workbook.SaveAs(outFilePath);
                 excelApp.Quit();
@@ -144,17 +144,17 @@ namespace Tourney2015ReportGenerator
 
             foreach (var ageGroup in competitorsByAgeDivision)
             {
-                var competitorsByRank = ageGroup.Value
-                    .GroupBy(x => x.Rank);
-                   
-                foreach (var rankGroup in competitorsByRank)
+                foreach(var rank in EventInfo.Ranks)
                 {
-                    var competitorsByGender = rankGroup.GroupBy(x => x.Gender);
+                    var competitorsInRank = ageGroup.Value
+                        .Where(x => x.IsIncludedInRank(rank));
+
+                    var competitorsByGender = competitorsInRank.GroupBy(x => x.Gender);
                     foreach (var genderGroup in competitorsByGender)
                     {
                         var competitors = genderGroup.OrderBy(x => x.Weight);
 
-                        PrintGroupHeader(genderGroup.Key + ", " + ageGroup.Key.Name + ", " + rankGroup.Key, worksheet, row++);
+                        PrintGroupHeader(genderGroup.Key + ", " + ageGroup.Key.Name + ", " + rank, worksheet, row++);
                         PrintTableColumnNames(worksheet, Competitor.TableColumnNames(), row++);
                         foreach (var competitor in competitors)
                         {
@@ -170,46 +170,46 @@ namespace Tourney2015ReportGenerator
             worksheet.Columns[firstCol + ":" + lastCol].AutoFit();
         }
 
-        protected void CreateFormsListWorksheet(NetOffice.ExcelApi.Worksheet worksheet)
-        {
-            var row = 1;
-            worksheet.Name = "Forms Divisions";
-            PrintWorksheetTitle("Forms Divisions", worksheet, row++);
+        //protected void CreateFormsListWorksheet(NetOffice.ExcelApi.Worksheet worksheet)
+        //{
+        //    var row = 1;
+        //    worksheet.Name = "Forms Divisions";
+        //    PrintWorksheetTitle("Forms Divisions", worksheet, row++);
 
-            var formsCompetitors = _reporter.GetCompetitors()
-                .Where(x => x.IsForms);
+        //    var formsCompetitors = _reporter.GetCompetitors()
+        //        .Where(x => x.IsForms);
 
-            var competitorsByAgeDivision = EventInfo.AgeDivisions
-                    .ToDictionary(
-                        x => x,
-                        y => formsCompetitors.Where(z => z.IsIncludedInAgeDivision(y)));
+        //    var competitorsByAgeDivision = EventInfo.AgeDivisions
+        //            .ToDictionary(
+        //                x => x,
+        //                y => formsCompetitors.Where(z => z.IsIncludedInAgeDivision(y)));
 
-            foreach (var ageGroup in competitorsByAgeDivision)
-            {
-                var competitorsByRank = ageGroup.Value
-                    .GroupBy(x => x.Rank);
+        //    foreach (var ageGroup in competitorsByAgeDivision)
+        //    {
+        //        var competitorsByRank = ageGroup.Value
+        //            .GroupBy(x => x.Rank);
 
-                foreach (var rankGroup in competitorsByRank)
-                {
-                    var competitorsByGender = rankGroup.GroupBy(x => x.Gender);
-                    foreach (var genderGroup in competitorsByGender)
-                    {
-                        var competitors = genderGroup.OrderBy(x => x.SchoolName);
+        //        foreach (var rankGroup in competitorsByRank)
+        //        {
+        //            var competitorsByGender = rankGroup.GroupBy(x => x.Gender);
+        //            foreach (var genderGroup in competitorsByGender)
+        //            {
+        //                var competitors = genderGroup.OrderBy(x => x.SchoolName);
 
-                        PrintGroupHeader(genderGroup.Key + ", " + ageGroup.Key.Name + ", " + rankGroup.Key, worksheet, row++);
-                        PrintTableColumnNames(worksheet, Competitor.TableColumnNames(), row++);
-                        foreach (var competitor in competitors)
-                        {
-                            PrintTableColumnData(worksheet, competitor.TableRowData(), row++);
-                        }
-                        row++;
-                    }
-                }
-            }
-            string firstCol = ExcelColumnFromNumber(1);
-            string lastCol = ExcelColumnFromNumber(Competitor.TableColumnNames().Length);
-            worksheet.Columns[firstCol + ":" + lastCol].AutoFit();
-        }
+        //                PrintGroupHeader(genderGroup.Key + ", " + ageGroup.Key.Name + ", " + rankGroup.Key, worksheet, row++);
+        //                PrintTableColumnNames(worksheet, Competitor.TableColumnNames(), row++);
+        //                foreach (var competitor in competitors)
+        //                {
+        //                    PrintTableColumnData(worksheet, competitor.TableRowData(), row++);
+        //                }
+        //                row++;
+        //            }
+        //        }
+        //    }
+        //    string firstCol = ExcelColumnFromNumber(1);
+        //    string lastCol = ExcelColumnFromNumber(Competitor.TableColumnNames().Length);
+        //    worksheet.Columns[firstCol + ":" + lastCol].AutoFit();
+        //}
 
 
         protected void PrintWorksheetTitle(string title, NetOffice.ExcelApi.Worksheet worksheet, int row)

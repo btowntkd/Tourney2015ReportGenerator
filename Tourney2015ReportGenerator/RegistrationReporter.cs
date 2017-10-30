@@ -53,9 +53,9 @@ namespace Tourney2015ReportGenerator
         protected bool IsCompetitor(RegistrationRecord record)
         {
             return record.TicketType == EventInfo.SingleElimTicket
+                || record.TicketType == EventInfo.SingleAndDoubleElimTicket
                 || record.TicketType == EventInfo.DoubleElim1EventTicket
-                || record.TicketType == EventInfo.DoubleElim2EventTicket
-                || record.TicketType == EventInfo.DoubleElim3EventTicket;
+                || record.TicketType == EventInfo.DoubleElim2EventTicket;
         }
 
         protected bool IsReferee(RegistrationRecord record)

@@ -12,7 +12,7 @@ namespace Tourney2015ReportGenerator
         public string SchoolName { get { return _textInfo.ToTitleCase(_record.SchoolName); } }
         public int Age { get { return int.Parse(_record.Age); } }
 
-        public decimal Weight { get { return decimal.Parse(_record.Weight.ToLower().Replace("lbs.", "").Replace("pounds","").Replace("lbs","").Trim()); } }
+        public decimal Weight { get { return decimal.Parse(_record.Weight.ToLower().Replace("lbs.", "").Replace("pounds","").Replace("lbs","").Replace("lb", "").Trim()); } }
 
         public string Gender { get { return _record.Gender; } }
 

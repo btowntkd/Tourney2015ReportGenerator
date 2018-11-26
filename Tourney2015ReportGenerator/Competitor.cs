@@ -12,7 +12,32 @@ namespace Tourney2015ReportGenerator
         public string SchoolName { get { return _textInfo.ToTitleCase(_record.SchoolName); } }
         public int Age { get { return int.Parse(_record.Age); } }
 
-        public decimal Weight { get { return decimal.Parse(_record.Weight.ToLower().Replace("lbs.", "").Replace("pounds","").Replace("lbs","").Replace("lb", "").Trim()); } }
+        public decimal Weight
+        {
+            get
+            {
+                var weight = _record.Weight.ToLower().Replace(".", "").Replace("s", "");
+                if(weight.Contains("kg"))
+                {
+                    weight = weight.Replace("kg", "");
+                    decimal kg = 0.0m;
+                    if (decimal.TryParse(weight, out kg))
+                        return ConverKgToLb(kg);
+                    throw new ArgumentException($"Invalid weight: {_record.Weight}");
+                }
+
+                weight = weight.Replace("lb", "");
+                decimal lb = 0.0m;
+                if (decimal.TryParse(weight, out lb))
+                    return lb;
+                throw new ArgumentException($"Invalid weight: {_record.Weight}");
+            }
+        }
+
+        protected static decimal ConverKgToLb(decimal kg)
+        {
+            return (kg * 2.2046226m);
+        }
 
         public string Gender { get { return _record.Gender; } }
 

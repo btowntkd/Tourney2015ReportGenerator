@@ -16,17 +16,17 @@ namespace Tourney2015ReportGenerator
         {
             get
             {
-                var weight = _record.Weight.ToLower().Replace(".", "").Replace("s", "");
+                var weight = _record.Weight.ToLower().Replace("s", "");
                 if(weight.Contains("kg"))
                 {
-                    weight = weight.Replace("kg", "");
+                    weight = weight.Replace("kg.", "").Replace("kg", "");
                     decimal kg = 0.0m;
                     if (decimal.TryParse(weight, out kg))
                         return ConverKgToLb(kg);
                     throw new ArgumentException($"Invalid weight: {_record.Weight}");
                 }
 
-                weight = weight.Replace("lb", "");
+                weight = weight.Replace("lb.", "").Replace("lb", "");
                 decimal lb = 0.0m;
                 if (decimal.TryParse(weight, out lb))
                     return lb;

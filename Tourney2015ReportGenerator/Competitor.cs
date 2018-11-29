@@ -23,14 +23,14 @@ namespace Tourney2015ReportGenerator
                     decimal kg = 0.0m;
                     if (decimal.TryParse(weight, out kg))
                         return ConverKgToLb(kg);
-                    throw new ArgumentException($"Invalid weight: {_record.Weight}");
+                    throw new ArgumentException($"Invalid weight: {_record.FirstName} {_record.LastName} entered \"{_record.Weight}\"");
                 }
 
                 weight = weight.Replace("lb.", "").Replace("lb", "");
                 decimal lb = 0.0m;
                 if (decimal.TryParse(weight, out lb))
                     return lb;
-                throw new ArgumentException($"Invalid weight: {_record.Weight}");
+                throw new ArgumentException($"Invalid weight: {_record.FirstName} {_record.LastName} entered \"{_record.Weight}\"");
             }
         }
 
